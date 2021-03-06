@@ -1,17 +1,35 @@
 import React, {useState} from "react";
 import './App.css';
 
+
+
+function DisplayItem({ displayItem, idx, removedisplayItem }) {
+  return (
+    <div style={{display: "flex", flexFlow: "row", margin:"10px 0"}}>
+      <div style={{marginRight:"10px", marginLeft: "0px"}}>
+        {displayItem.name}
+      </div>
+      <div style={{marginRight:"10px", marginLeft: "0px"}}>
+        {displayItem.location}
+      </div>
+      <div>
+        <button onClick={() => removedisplayItem(idx)}>Remove Item</button>
+      </div>
+    </div>
+  );
+}
+
 function DisplayForm({ adddisplayItem }) {
-  const [displayData, setDisplayData] = useState("");
-  const [funFact, setFunFact] = useState("");
+  const [displayName, setDisplayData] = useState("");
+  const [location, setFunFact] = useState("");
 
   const handleSubmit = e => {
     e.preventDefault();
     
-    if (!displayData) 
+    if (!displayName) 
       return;
     
-    adddisplayItem(displayData, funFact);
+    adddisplayItem(displayName, location);
     
     setDisplayData("");
     setFunFact("");
@@ -21,14 +39,14 @@ function DisplayForm({ adddisplayItem }) {
     <form style={{margin:"10px 0"}} onSubmit={handleSubmit}>
       <input
         type="text"
-        value={displayData}
-        placeholder="Display Data"
+        value={displayName}
+        placeholder="Name"
         onChange={e => setDisplayData(e.target.value)}
       />
       <input
         type="text"
-        value={funFact}
-        placeholder="Fun Fact (optional)"
+        value={location}
+        placeholder="Location"
         onChange={e => setFunFact(e.target.value)}
       />
       <button>Add Row</button>
@@ -36,38 +54,12 @@ function DisplayForm({ adddisplayItem }) {
   );
 }
 
-function DisplayItem({ displayItem, idx, removedisplayItem }) {
-  return (
-    <div style={{display: "flex", flexFlow: "row", margin:"10px 0"}}>
-      <div style={{marginRight:"10px", marginLeft: "0px"}}>
-        {idx + 1}.
-      </div>
-      <div style={{marginRight:"10px", marginLeft: "0px"}}>
-        {displayItem.data}
-      </div>
-      <div style={{ marginRight:"10px", color: "green", display: displayItem.funFactExists ? "default" : "none" }}>
-        {displayItem.funFact}
-      </div>
-      <div>
-        <button onClick={() => removedisplayItem(idx)}>Remove Item</button>
-      </div>
-    </div>
-  );
-}
+function Display({props}) {
+  const [displayItems, setdisplayItems] = React.useState(props);
 
-function App() {
-  const [displayItems, setdisplayItems] = React.useState([
-    { data: "London", funFact:"", funFactExists: false},
-    { data: "Birmingham", funFact:"", funFactExists: false},
-    { data: "Edinburgh", funFact:"Here is a fun fact", funFactExists: true}
-  ]);
-
-  const adddisplayItem = (data, fFact ) => {
-    let funFactExists = false;
-
-    if (fFact.length > 0) funFactExists = true;
-
-    const newdisplayItems = [...displayItems, { data:data, funFact:fFact, funFactExists: funFactExists }];
+  const adddisplayItem = (name, location ) => {
+      
+    const newdisplayItems = [...displayItems, { name:name, location:location }];
     
     setdisplayItems(newdisplayItems);
   };
@@ -94,12 +86,11 @@ function App() {
   };
 
   return (
-    <div className="app">
+    <div>
       <div>
         {displayItems.map((displayItem, idx) => (
           <DisplayItem
             key={idx}
-            idx={idx}
             displayItem={displayItem}
             removedisplayItem={removedisplayItem}
           />
@@ -109,6 +100,22 @@ function App() {
       </div>
     </div>
   );
+}
+
+
+
+function App() {
+  const data = [
+    {name: 'A', location: 'London'},
+    {name: 'B',  location: 'Birmingham'},
+    {name: 'C', location: 'Edinburgh', facts: {fun: 'Here is a fun fact'} }
+  ];
+
+  return(
+    <div className="app">
+      <Display props={data}/>
+    </div>
+  )
 }
 
 export default App;
